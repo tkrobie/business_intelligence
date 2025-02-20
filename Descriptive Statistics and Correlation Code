@@ -1,0 +1,76 @@
+library(tidyverse)
+getwd()
+
+
+# Load necessary package
+library(dplyr)
+library(tidyr)
+
+# Read the dataset
+data <- read.csv("final_data.csv")
+
+# Create the summary statistics table
+summary_table <- data %>%
+  summarise(
+    Mean = c(mean(DiabetesCases, na.rm = TRUE), 
+             mean(PerCapitaIncome, na.rm = TRUE), 
+             mean(PhysicianRatePer100000, na.rm = TRUE),
+             mean(ObesityCases, na.rm = TRUE),
+             mean(PhysicallyInactiveCases, na.rm = TRUE),
+             mean(PopulationDensity, na.rm = TRUE)),
+    
+    Median = c(median(DiabetesCases, na.rm = TRUE), 
+               median(PerCapitaIncome, na.rm = TRUE), 
+               median(PhysicianRatePer100000, na.rm = TRUE),
+               median(ObesityCases, na.rm = TRUE),
+               median(PhysicallyInactiveCases, na.rm = TRUE),
+               median(PopulationDensity, na.rm = TRUE)),
+    
+    SD = c(sd(DiabetesCases, na.rm = TRUE), 
+           sd(PerCapitaIncome, na.rm = TRUE), 
+           sd(PhysicianRatePer100000, na.rm = TRUE),
+           sd(ObesityCases, na.rm = TRUE),
+           sd(PhysicallyInactiveCases, na.rm = TRUE),
+           sd(PopulationDensity, na.rm = TRUE)),
+  ) %>%
+  mutate(Variable = c("Diabetes Cases", "Per Capita Income", "Physician Rate per 100,000", "Obesity Cases", "Physically Inactive Cases", "Population Density")) %>%
+  select(Variable, Mean, Median, SD)  # Reorder columns
+
+# Print the formatted summary table
+print(summary_table)
+
+
+
+#Professional Summary Table
+library(texreg)
+htmlreg(summary_table, stars = 0.05, custom.coef.names = c("Diabetes Cases", "Income Per Capita", "Physician Rate Per 100000", "Obesity Cases", "Physically Inactive Cases", "Population Density"), caption = "Regression Model", caption.above = TRUE, file = "summarytable.doc")
+
+
+
+stargazer(data, type = "text", title="Descriptive Statistics", digits = 1, out = "descriptiveStatistics6.doc")
+
+
+
+
+
+#Correlation Table
+
+library(stargazer)
+data2 <- as.data.frame(data)
+stargazer(data2, type = "text", title="Descriptive Statistics", digits = 1, out = "descriptives4.txt")
+
+#3, 4, 7, 9, 10, 11
+cortable <- cor(data2[, c(3, 4, 7, 9, 10, 11)])
+
+
+stargazer(cortable, title = "Correlation Matrix", out = "CorrelationMatrix.doc")
+
+
+htmlreg(cortable, stars = 0.05, caption = "Regression Model", caption.above = TRUE, file = "summarytable.doc")
+
+
+
+library(texreg)
+
+htmlreg(data, stars = 0.05, custom.coef.names = c("Intercept", "At-bats"), caption = "Descriptive Statistics", caption.above = TRUE, file = "projectdescriptivestatistics.doc")
+
